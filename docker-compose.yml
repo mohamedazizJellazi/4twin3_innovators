@@ -91,11 +91,6 @@ services:
       - GATEWAY_ROUTES_URI=http://localhost:8090  # Set the gateway's routes URI
     depends_on:
       - Eureka
-      - Foyer
-      - Etudiant
-      - Chambre
-      - Bloc
-      - Universite
     healthcheck:
       test: ["CMD", "curl", "-f", "http://eureka:8761/eureka/"]
       interval: 10s

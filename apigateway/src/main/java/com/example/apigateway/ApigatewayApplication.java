@@ -16,15 +16,16 @@ public class ApigatewayApplication {
 	public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
 		return builder.routes()
 				.route("microuniversite", r->r.path("/universite/**")
-						.uri("http://localhost:8082/"))
+						.uri("http://universite:8082/"))  // Update this line
 				.route("microbloc", r->r.path("/bloc/**")
-						.uri("http://localhost:8083/"))
+						.uri("http://bloc:8083/"))  // Update this line
 				.route("microchambre", r->r.path("/chambre/**")
-						.uri("http://localhost:8084/"))
+						.uri("http://chambre:8084/"))  // Update this line
 				.route("microetudiant", r->r.path("/etudiant/**","/reservation/**")
-						.uri("http://localhost:8085/"))
+						.uri("http://etudiant:8085/"))  // Update this line
 				.route("microfoyer", r->r.path("/foyer/**")
-						.uri("http://localhost:8081/"))
+						.uri("http://foyer:8081/"))  // Update this line
 				.build();
 	}
+
 }
