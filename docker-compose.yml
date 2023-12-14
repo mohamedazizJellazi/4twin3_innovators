@@ -1,0 +1,133 @@
+version: "3.9"
+services:
+  Universite:
+    container_name: universite
+    build: C:/Users/pc/IdeaProjects/microuniversite
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/springdb?createDatabaseIfNotExist=true&useSSL=false&max_allowed_packet=15728640
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+    image: "microuniversite"
+    restart: unless-stopped
+    depends_on:
+      - Eureka
+      - db-mysql
+
+  Bloc:
+    container_name: bloc
+    build: C:\Users\pc\IdeaProjects\microbloc
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/springdb?createDatabaseIfNotExist=true&useSSL=false&max_allowed_packet=15728640
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+    image: "microbloc"
+    restart: unless-stopped
+    depends_on:
+      - Eureka
+      - db-mysql
+
+  Chambre:
+    container_name: chambre
+    build: C:\Users\pc\IdeaProjects\microchambre
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/springdb?createDatabaseIfNotExist=true&useSSL=false&max_allowed_packet=15728640
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+    image: "microchambre"
+    restart: unless-stopped
+    depends_on:
+      - Eureka
+      - db-mysql
+
+  Etudiant:
+    container_name: etudiant
+    build: C:\Users\pc\IdeaProjects\microetudiant
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/springdb?createDatabaseIfNotExist=true&useSSL=false&max_allowed_packet=15728640
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+    image: "microetudiant"
+    restart: unless-stopped
+    depends_on:
+      - Eureka
+      - db-mysql
+      - smtp
+
+  Foyer:
+    container_name: foyer
+    build: C:\Users\pc\IdeaProjects\microfoyer
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db-mysql:3306/springdb?createDatabaseIfNotExist=true&useSSL=false&max_allowed_packet=15728640
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+    image: "microfoyer"
+    restart: unless-stopped
+    depends_on:
+      - Eureka
+      - db-mysql
+   
+  gateway:
+    container_name: gateway
+    build: C:\Users\pc\IdeaProjects\apigateway
+    ports:
+      - "8090:8090"  # Expose the gateway on port 8090
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://serviceregistry:8761/eureka/
+      - GATEWAY_ROUTES_URI=http://localhost:8090  # Set the gateway's routes URI
+    depends_on:
+      - Eureka
+      - Foyer
+      - Etudiant
+      - Chambre
+      - Bloc
+      - Universite
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://eureka:8761/eureka/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5  
+  
+  smtp:
+    image: namshi/smtp
+    ports:
+      - "587:587"
+    environment:
+      - SMTP_USERNAME=mohamedaziz.jellazi@esprit.tn
+      - SMTP_PASSWORD=181JMT2217
+      - USE_TLS=true
+      - ALLOWED_HOSTS=*
+
+  Eureka:
+    container_name: eureka
+    build: C:\Users\pc\IdeaProjects\EurekaDisco
+    hostname: serviceregistry
+    ports:
+      - "8761:8761"
+    image: "eureka"
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://serviceregistry:8761/eureka/
+
+  db-mysql:
+    image: "mysql:5.6"
+    container_name: db-mysql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=springdb
+    ports:
+      - "3306:3306"
+    restart: unless-stopped

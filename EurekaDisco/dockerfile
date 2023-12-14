@@ -1,0 +1,4 @@
+FROM openjdk:17
+EXPOSE 8761
+ADD target/EurekaDisco-0.0.1-SNAPSHOT.jar EurekaDisco-docker.jar
+ENTRYPOINT ["java","-jar","EurekaDisco-docker.jar"]
